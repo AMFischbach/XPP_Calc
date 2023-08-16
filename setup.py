@@ -11,7 +11,7 @@ setup(
 	description=DESCRIPTION,
 	packages=find_packages(),
 	install_requires=INSTALL_REQS,
-	python_requires=">=3.9, <=3.10",
+	python_requires=">=3.9",
 	url="https://github.com/AMFischbach/XPP_Diffraction_Computer"
 
 
