@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 VERSION = "1.0"
 DESCRIPTION = "A package that allows for helpful diffraction computations at XPP"
-INSTALL_REQS = ["numpy", "matplotlib", "tqdm", "hklpy"]
+INSTALL_REQS = ["numpy", "matplotlib", "tqdm"]
 
 setup(
 	name="XPP_Diffraction_Computer",
