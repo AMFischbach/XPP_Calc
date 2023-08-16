@@ -2,7 +2,7 @@
 
 # Import the necessary files
 from XPP_Simulation.XPP_Detector_Class import XPP_Detector
-from . Enums import *
+from ..Enums import *
 
 def get_detector(detectorTypeEnum, detecPos, detecOrientation, gammaObj, deltaObj, wavelength):
 	"""
