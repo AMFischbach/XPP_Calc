@@ -312,12 +312,24 @@ class XPP_Diffractometer(E6C):
 
 		return possible_motor_pos
 
-	def detector_to_hkl(self, GDmatrix=None):
+	def detector_center_to_hkl(self):
+		"""
+		Returns where the center of the detector is in hkl.
+		"""
+		# Get the current equivalent six circle values of the diffractometer
+		pos = self.calc.physical_positions
+
+		# Compute and return hkl
+		return self.calc.inverse(pos)
+
+	def detector_area_to_hkl(self, GDmatrix=None):
 		"""
 		Creates a numpy matrix of hkl values corresponding to each pixel on the detector
 		The matrix is 2D with size (pixelWidthNum x pixelHeightNum) with each entry a numpy array
 		of hkl values.
-		Uses the create_xyzMatrix method in the detector class with a final transformation
+		Uses the create_GD_matrix method in the detector class with a final transformation
+
+		Optional parameter to input GDmatrix.
 		"""
 		if GDmatrix is None:
 			# Create a matrix corresponding to the gamma and delta values of each pixel
