@@ -15,24 +15,24 @@ class XPP_Detector():
 	A detector class that emulates XPP's robot arm detector
 	"""
 
-	def __init__(self, detecPos, detecOrientation, gammaObj, deltaObj, detectorAttributes, wavelength, name, xyzFormat):
+	def __init__(self, detec_pos, detec_orien, gammaObj, deltaObj, detectorAttributes, wavelength, name, xyzFormat):
 		"""
 		Define and initialize XPP detector. PixelSize is in microns.
 		____INPUTS____
-		detecPos: incidentAxisPos, horizontalAxisPos, virticalAxis,Pos 
-		detecOrientation: Euler angles at which detector is orientated
+		detec_pos: incidentAxisPos, horizontalAxisPos, virticalAxis,Pos 
+		detec_orien: Euler angles at which detector is orientated
 		gammaObj and deltaObj: the component ophyd object from the diffractometer class of gamma and delta
 		detectorAttributes: (pixelWidthNum, pixelHeightNum, pixel_size, offsets)
 		wavelength: wavelength of incident light in Angstroms
 		name: the name of the detector, commonly the detector type
 		"""
 		# The initial detector position and euler angles are just floats defined in the diffractometer __init__ method 
-		self.incidentAxisPos = detecPos[0]
-		self.horizontalAxisPos = detecPos[1]
-		self.virticalAxisPos = detecPos[2]
-		self.alpha = detecOrientation[0]
-		self.beta = detecOrientation[1]
-		self.gamma = detecOrientation[2]
+		self.incidentAxisPos = detec_pos[0]
+		self.horizontalAxisPos = detec_pos[1]
+		self.virticalAxisPos = detec_pos[2]
+		self.alpha = detec_orien[0]
+		self.beta = detec_orien[1]
+		self.gamma = detec_orien[2]
 
 		# Gamma and delta's cpts which are handed down from XPP_Diffractometer Class
 		self.gammaObj = gammaObj
@@ -65,7 +65,7 @@ class XPP_Detector():
 
 		# Initialize the detector angle values of gamma and delta to reflect
 		# the inital position of the detector
-		self.move(detecPos, detecOrientation, standard_format=True)
+		self.move(detec_pos, detec_orien, standard_format=True)
 		
 	def _get_detec_motor(self, motorEnum):
 		"""
@@ -126,46 +126,46 @@ class XPP_Detector():
 
 		return userTriplet
 	
-	def _get_actual_detec_pos(self, detecPos=None):
+	def _get_actual_detec_pos(self, detec_pos=None):
 		"""
 		Given a detector position in the detector's frame of reference, applies the neccesary offsets
 		to move into the goniometer's frame of reference.
 		"""
-		# If not given a detecPos, then we use the current detector pos
-		if detecPos is None:
-			detecPos = (self.incidentAxisPos, self.horizontalAxisPos, self.virticalAxisPos)
+		# If not given a detec_pos, then we use the current detector pos
+		if detec_pos is None:
+			detec_pos = (self.incidentAxisPos, self.horizontalAxisPos, self.virticalAxisPos)
 
-		# If we are given a detecPos, then we need to rearrange the axis to match the user's input
+		# If we are given a detec_pos, then we need to rearrange the axis to match the user's input
 		else:
-			detecPos = self._user_to_standard_axis(detecPos)
+			detec_pos = self._user_to_standard_axis(detec_pos)
 
 		# Convert into goniometer frame
-		incidentAxisPos = detecPos[0] - self.offsets["incidentAxisPos"]
-		horizontalAxisPos = detecPos[1] - self.offsets["horizontalAxisPos"]
-		virticalAxisPos = detecPos[2] - self.offsets["virticalAxisPos"]
+		incidentAxisPos = detec_pos[0] - self.offsets["incidentAxisPos"]
+		horizontalAxisPos = detec_pos[1] - self.offsets["horizontalAxisPos"]
+		virticalAxisPos = detec_pos[2] - self.offsets["virticalAxisPos"]
 
 		return (incidentAxisPos,horizontalAxisPos,virticalAxisPos)
 
-	def _get_actual_detec_orien(self, detecOrientation=None):
+	def _get_actual_detec_orien(self, detec_orien=None):
 		"""
 		Given a detector orientation, applies the neccesary offsets.
 		"""
-		# If not given a detecOrientation, then we use the current detector pos
-		if detecOrientation is None:
+		# If not given a detec_orien, then we use the current detector pos
+		if detec_orien is None:
 			# If the angles are not defined, then we return none
 			if self.alpha is None or self.beta is None or self.gamma is None:
 				return (None, None, None)
 			else:
-				detecOrientation = (self.alpha, self.beta, self.gamma)
+				detec_orien = (self.alpha, self.beta, self.gamma)
 			
-		# If we are given a detecOrientation, then we need to rearrange the axis to match the user's input
+		# If we are given a detec_orien, then we need to rearrange the axis to match the user's input
 		else:
-			detecOrientation = self._user_to_standard_axis(detecOrientation)
+			detec_orien = self._user_to_standard_axis(detec_orien)
 
 		# Convert into goniometer frame
-		alpha = detecOrientation[0] - self.offsets["detecAlpha"]
-		beta = detecOrientation[1] - self.offsets["detecBeta"]
-		gamma = detecOrientation[2] - self.offsets["detecGamma"]
+		alpha = detec_orien[0] - self.offsets["detecAlpha"]
+		beta = detec_orien[1] - self.offsets["detecBeta"]
+		gamma = detec_orien[2] - self.offsets["detecGamma"]
 
 		return (alpha,beta,gamma)
 
@@ -210,17 +210,17 @@ class XPP_Detector():
 			print("invalid range")
 			return False
 
-	def move(self, detecPos, detecOrientation = None, standard_format=False):
+	def move(self, detec_pos, detec_orien = None, standard_format=False):
 		"""
 		Moves the detector to a new incidentAxisPos, horizontalAxisPos, virticalAxis pos position and changes the Euler angles.
 		Parameters:
-		detecPos (array) - x,y,z
-		detecOrientation (array) - alpha, beta, gamma
+		detec_pos (array) - x,y,z
+		detec_orien (array) - alpha, beta, gamma
 		standard_format (boolean) - if the order of x,y,z and alpha, beta, gamma is how the user has defined it or
 					    if the order is in the standard format (incident, horizontal, viritcal)
 		"""
 		# Get the equivalent gamma and delta values
-		gamma, delta = self.detector_to_angle(detecPos)
+		gamma, delta = self.detector_to_angle(detec_pos)
 
 		# Check to make sure that there are no existing limits prohibiting this move
 		for banned_region in self.banned_regions:
@@ -234,32 +234,32 @@ class XPP_Detector():
 		self.deltaObj.set(delta)
 		
 		# Update the X,Y,Z positions, NO OFFSET, but we still have to rearrange the order to be standard 
-		detecPos = self._user_to_standard_axis(detecPos)
-		self.incidentAxisPos = detecPos[0]
-		self.horizontalAxisPos = detecPos[1]
-		self.virticalAxisPos = detecPos[2]
+		detec_pos = self._user_to_standard_axis(detec_pos)
+		self.incidentAxisPos = detec_pos[0]
+		self.horizontalAxisPos = detec_pos[1]
+		self.virticalAxisPos = detec_pos[2]
 
 		# Update the Euler angles
-		# If no angles are given, then the detecOrientation is set to None
-		if detecOrientation is None:
+		# If no angles are given, then the detec_orien is set to None
+		if detec_orien is None:
 			self.alpha = None
 			self.beta = None
 			self.gamma = None
 		else:
 			# Update the alpha, beta, and gamma NO OFFSET, but we still have to rearrange the order to be standard
-			detecOrientation = self._user_to_standard_axis(detecOrientation)
-			self.alpha = detecOrientation[0]
-			self.beta = detecOrientation[1]
-			self.gamma = detecOrientation[2]
+			detec_orien = self._user_to_standard_axis(detec_orien)
+			self.alpha = detec_orien[0]
+			self.beta = detec_orien[1]
+			self.gamma = detec_orien[2]
 
-	def detector_to_angle(self, detecPos=None, standard_format=False):
+	def detector_to_angle(self, detec_pos=None, standard_format=False):
 		"""
 		Given detector position in x,y,z, we calculate the corresponding gamma and delta angles
 		accordingly. This allows us to convert xpp's robot arm movements to what would be the gamma
 		and delta angle movement of a typical 6 circle diffractometer.
 		
 		Parameters:
-		detecPos (array) - x,y,z
+		detec_pos (array) - x,y,z
 		standard_format (boolean) - if the order of x,y,z and alpha, beta, gamma is how the user has defined it or
 					    if the order is in the standard format (incident, horizontal, viritcal)
 
@@ -267,18 +267,18 @@ class XPP_Detector():
 		(gamma, delta)
 		"""		
 		# Get the true detector position
-		if detecPos is None:
-			detecPos = self._get_actual_detec_pos()
+		if detec_pos is None:
+			detec_pos = self._get_actual_detec_pos()
 		else:
 			# If the input is not already in the standard format (offsets not added and not in the correct order)
 			if not standard_format:
-				detecPos = self._get_actual_detec_pos(detecPos)
+				detec_pos = self._get_actual_detec_pos(detec_pos)
 
 
 		# Convert to goniometer frame of reference
-		incidentAxisPos = detecPos[0]
-		horizontalAxisPos = detecPos[1]
-		virticalAxisPos = detecPos[2]
+		incidentAxisPos = detec_pos[0]
+		horizontalAxisPos = detec_pos[1]
+		virticalAxisPos = detec_pos[2]
 
 		# FIRST GAMMA IS COMPUTED
 		# There may be the case in which the detector is on the z axis, in this case
@@ -340,11 +340,11 @@ class XPP_Detector():
 		virticalAxisPos = r*math.sin(delta) + self.offsets["virticalAxisPos"]
 
 		# Put the axis in the user defined format
-		detecPos = self._standard_to_user_axis((incidentAxisPos, horizontalAxisPos, virticalAxisPos))
+		detec_pos = self._standard_to_user_axis((incidentAxisPos, horizontalAxisPos, virticalAxisPos))
 
-		return detecPos
+		return detec_pos
 
-	def create_from_xyzMatrix(self, detecPos=None, detecOrientation=None, furtherTransformation=None):
+	def create_from_xyzMatrix(self, detec_pos=None, detec_orien=None, furtherTransformation=None):
 		"""
 		Using detector position and orientation we create a 2D matrix of x,y,z values
 		corresponding to each detector pixel. We can also optionally pass a function which
@@ -353,10 +353,10 @@ class XPP_Detector():
 		way is to streamline the process of computing these matrices while maintaing speed.
 		"""
 		# Get the actual detector position
-		detecPos = self._get_actual_detec_pos(detecPos)
+		detec_pos = self._get_actual_detec_pos(detec_pos)
 		
 		# Get the actual Euler Angles
-		trueAlpha, trueBeta, trueGamma = self._get_actual_detec_orien(detecOrientation)
+		trueAlpha, trueBeta, trueGamma = self._get_actual_detec_orien(detec_orien)
 
 		# If no further transformation is given, then just return back the original values
 		if furtherTransformation is None:
@@ -384,7 +384,7 @@ class XPP_Detector():
 		# In the case that no Euler angles are specified, we compute the rotation matrix
 		# assumming the normal of the detector faces the origin
 		if trueAlpha is None:
-			rotationM = self.get_rotation_matrix(detecPos, True)
+			rotationM = self.get_rotation_matrix(detec_pos, True)
 		else:
 
 			# If Euler angles are specified, we compute the rotation matrix here
@@ -403,7 +403,7 @@ class XPP_Detector():
 			rotationM = np.matmul(gammaM, np.matmul(betaM, alphaM))
 
 		# Define the translation vector (center of the detector in incidentAxisPos,horizontalAxisPos,z)
-		translationVector = np.array(detecPos)
+		translationVector = np.array(detec_pos)
 
 		# Go through each detector pixel and compute xyz vector
 		for row in tqdm(range(horizontalAxisVals.size), desc="finding detector realspace positions", ncols=100, leave=False):
@@ -427,7 +427,7 @@ class XPP_Detector():
 		# For speed we do not create 2 matrices
 		return xyzMatrix
 
-	def create_GD_matrix(self, detecPos=None, detecOrientation=None):
+	def create_GD_matrix(self, detec_pos=None, detec_orien=None):
 		"""
 		Creates a 2D matrix of gamma and delta pairs corresponding to each pixel on the detector.
 		Uses the create_xyzMatrix method with a final specified transformation.
@@ -437,9 +437,9 @@ class XPP_Detector():
 			return self.detector_to_angle(xyz, True)
 
 		# Compute and return GDmatrix
-		return self.create_from_xyzMatrix(detecPos, detecOrientation, xyz_to_gamma)
+		return self.create_from_xyzMatrix(detec_pos, detec_orien, xyz_to_gamma)
 
-	def create_Q_matrix(self, detecPos=None, detecOrientation=None):
+	def create_Q_matrix(self, detec_pos=None, detec_orien=None):
 		"""
 		Creates a 2D matrix of qx, qy, qz values corresponding to each pixel on the detector.
 		Uses the create_xyzMatrix method with a final specified transformation.
@@ -447,7 +447,7 @@ class XPP_Detector():
 		def xyz_to_Q(xyz):
 			return self._standard_to_user_axis(self.get_pure_Q(xyz, True))
 
-		return self.create_from_xyzMatrix(detecPos, detecOrientation, xyz_to_Q)
+		return self.create_from_xyzMatrix(detec_pos, detec_orien, xyz_to_Q)
 
 	def in_range(self, gamma, delta, banned_region):
 		"""
@@ -489,7 +489,7 @@ class XPP_Detector():
 		our point of scattering it at the origin.
 		
 		Parameters:
-		detecPos (array) - x,y,z
+		detec_pos (array) - x,y,z
 		standard_format (boolean) - if the order of x,y,z and alpha, beta, gamma is how the user has defined it or
 					    if the order is in the standard format (incident, horizontal, viritcal)
 		"""
@@ -528,7 +528,7 @@ class XPP_Detector():
 		
 		return Q
 
-	def get_rotation_matrix(self, detecPos=None, standard_format=False):
+	def get_rotation_matrix(self, detec_pos=None, standard_format=False):
 		"""
 		Given detector x,y,z, finds the rotation matrix that will roatate the detector
 		so that it is pointing towards the origin. 
@@ -536,12 +536,12 @@ class XPP_Detector():
 		it's all flipped around.
 		"""
 		# Get the true detector position
-		if detecPos is None:
-			detecPos = self._get_actual_detec_pos()
+		if detec_pos is None:
+			detec_pos = self._get_actual_detec_pos()
 		else:
 			# If the input is not already in the standard format (offsets not added and not in the correct order)
 			if not standard_format:
-				detecPos = self._get_actual_detec_pos(detecPos)
+				detec_pos = self._get_actual_detec_pos(detec_pos)
 
 		# So the best way to do this is do normalize the given vector, and then find
 		# the rotation matrix such that the (0,0,1) is rotated to point in the direction
@@ -550,7 +550,7 @@ class XPP_Detector():
 		# CREDIT TO STACK OVERFLOW for the derivation of the roatation matrix
 		# Define 2 vector a and b, (a will be rotated onto b)
 		a = np.array([0,0,1]) 
-		b = np.array([detecPos[0], detecPos[1], detecPos[2]])
+		b = np.array([detec_pos[0], detec_pos[1], detec_pos[2]])
 
 		# Normalize b and flip its direction
 		b = -b/np.linalg.norm(b)
@@ -569,13 +569,13 @@ class XPP_Detector():
 
 		return RM
 
-	def get_tangent_E_angles(self, detecPos):
+	def get_tangent_E_angles(self, detec_pos):
 		"""
 		Failed attempt at writing this method which has become the bane of my existence
 		"""
-		incidentAxisPos = detecPos[0]
-		horizontalAxisPos = detecPos[1]
-		virticalAxisPos = detecPos[2]
+		incidentAxisPos = detec_pos[0]
+		horizontalAxisPos = detec_pos[1]
+		virticalAxisPos = detec_pos[2]
 		
 		d = math.sqrt(incidentAxisPos**2 + horizontalAxisPos**2)
 		r = math.sqrt(incidentAxisPos**2 + horizontalAxisPos**2 + virticalAxisPos**2)
@@ -598,7 +598,8 @@ class XPP_Detector():
 
 		rotationM = np.matmul(alphaM, np.matmul(betaM, gammaM))
 
-		return rotationM
+		#return rotationM
+		return trueAlpha, trueBeta, trueGamma
 	
 	def plot(self, points=False, title=""):
 		"""
@@ -650,9 +651,9 @@ class XPP_Detector():
 		# Title the graph
 		if title == "":
 			# Get the actual detector position and title the plot accordingly
-			detecPos = self._get_actual_detec_pos()
-			detecPos = self._standard_to_user_axis(detecPos)
-			title = "detector position: (" + str(detecPos[0]) + ", " + str(detecPos[1]) + ", " + str(detecPos[2]) + ")"
+			detec_pos = self._get_actual_detec_pos()
+			detec_pos = self._standard_to_user_axis(detec_pos)
+			title = "detector position: (" + str(detec_pos[0]) + ", " + str(detec_pos[1]) + ", " + str(detec_pos[2]) + ")"
 
 		plt.title(title)
 		ax.set_xlabel("Incident Beam Axis")

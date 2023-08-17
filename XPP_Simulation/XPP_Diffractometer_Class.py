@@ -1,4 +1,4 @@
-# Author: Trey Fischbach, Date Created: Jul 11, 2023, Date Last Modified: Jul 20, 2023
+# Author: Trey Fischbach, Date Created: Jul 11, 2023, Date Last Modified: Aug 17, 2023
 
 # Import the necessary packages
 from hkl import E6C
@@ -70,7 +70,7 @@ class XPP_Diffractometer(E6C):
 		initPos = XPP_Motor_Pos((0,0,0,0),(100,0,0),(90,0,-90))
 
 		# Create the detector obj
-		self.detector = get_detector(detectorType, initPos.detecPos, initPos.detecOrientation, self.gamma, self.delta, self.calc.wavelength) 
+		self.detector = get_detector(detectorType, initPos.detec_pos, initPos.detec_orien, self.gamma, self.delta, self.calc.wavelength) 
 
 		# Initialize all diffractor motors except the detector
 		self.set_goni_angle(Goniometer.theta, initPos.goniometerPos[0])
@@ -91,7 +91,7 @@ class XPP_Diffractometer(E6C):
 				beta = lattice_parms[4], gamma = lattice_parms[5])
 		self.calc.new_sample(name,lattice=lattice)
 
-	def add_reflection(self, reflection, theta=0, swivel_x=0, swivel_z=0, phi=0, gamma=0, delta=0, detecPos=None):
+	def add_reflection(self, reflection, theta=0, swivel_x=0, swivel_z=0, phi=0, gamma=0, delta=0, detec_pos=None):
 		"""
 		Adds a reflection within the hklpy diffractometer.
 		Either takes in the six circle diffractometer inputs OR the four goniometer angles with a detector x,y,z position.
@@ -109,9 +109,9 @@ class XPP_Diffractometer(E6C):
 		phi = phi - self.offsets["phi"]
 
 		# If given a detector position, need to compute gamma and delta
-		if detecPos is not None:
-			# This will automatically account for the offsets included in the given detecPos
-			gamma, delta = self.detector.detector_to_angle(detecPos)			
+		if detec_pos is not None:
+			# This will automatically account for the offsets included in the given detec_pos
+			gamma, delta = self.detector.detector_to_angle(detec_pos)			
 			
 
 		# Add the reflection
@@ -135,17 +135,20 @@ class XPP_Diffractometer(E6C):
 		return UB_matrix
 
 	def get_XPP_Motor_Pos(self):
-		"""Creates an XPP_Motor_Pos object based upon current motor position"""
+		"""
+		Creates an XPP_Motor_Pos object based upon current motor position.
+		NO OFFSETS
+		"""
 		goniometerPos = []
 		goniometerPos.append(self.calc["theta"].value)
 		goniometerPos.append(self.calc["swivel_x"].value)
 		goniometerPos.append(self.calc["swivel_z"].value)
 		goniometerPos.append(self.calc["phi"].value)
 
-		detecPos = [self.detector.incidentAxisPos, self.detector.horizontalAxisPos, self.detector.virticalAxisPos]
-		detecOrientation = [self.detector.alpha, self.detector.beta, self.detector.gamma]	
+		detec_pos = [self.detector.incidentAxisPos, self.detector.horizontalAxisPos, self.detector.virticalAxisPos]
+		detec_orien = [self.detector.alpha, self.detector.beta, self.detector.gamma]	
 
-		return XPP_Motor_Pos(goniometerPos, detecPos, detecOrientation)
+		return XPP_Motor_Pos(goniometerPos, detec_pos, detec_orien)
 	
 	def _get_goni_motor(self, motorEnum):
 		"""
@@ -294,8 +297,11 @@ class XPP_Diffractometer(E6C):
 					break
 
 			if allowed:
-				# If the proposed detector position is in an allowed region, compute x,y,z 
-				x,y,z = self.detector.angle_to_detector(gamma, delta, r) 
+				# If the proposed detector position is in an allowed region, compute detector position 
+				detec_pos = self.detector.angle_to_detector(gamma, delta, r) 
+
+				# Switch to be in standard formatt
+				detec_pos = self.detector.user_to_standard_axis(detec_pos)
 
 				# Create a motor pos object and add it to the list of posible motor positions
 				# We must add back all the offsets for the goniometer motors
@@ -306,11 +312,11 @@ class XPP_Diffractometer(E6C):
 				goniometerPos.append(angles.phi+self.offsets["phi"])
 
 				# Detector values already have offsets included from detector class
-				detecPos = (x, y, z)
-				detecOrientation = self.detector.get_tangent_E_angles(detecPos)
+				detec_orien = self.detector.get_tangent_E_angles(detec_pos)
 				
+				# Switch triplets to be in standard formatt
 				# Add the possible motor position object to the list
-				possible_motor_pos.append(XPP_Motor_Pos(goniometerPos, detecPos, detecOrientation))
+				possible_motor_pos.append(XPP_Motor_Pos(goniometerPos, detec_pos, detec_orien))
 
 		return possible_motor_pos
 
