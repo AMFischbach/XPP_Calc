@@ -301,7 +301,7 @@ class XPP_Diffractometer(E6C):
 				detec_pos = self.detector.angle_to_detector(gamma, delta, r) 
 
 				# Switch to be in standard formatt
-				detec_pos = self.detector.user_to_standard_axis(detec_pos)
+				detec_pos = self.detector._user_to_standard_axis(detec_pos)
 
 				# Create a motor pos object and add it to the list of posible motor positions
 				# We must add back all the offsets for the goniometer motors
