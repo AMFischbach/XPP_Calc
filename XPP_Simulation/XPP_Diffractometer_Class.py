@@ -8,8 +8,8 @@ from ophyd import Component as Cpt
 
 from XPP_Simulation.XPP_Detector_Class import XPP_Detector
 from XPP_Simulation.Detector_Subclasses import * 
-from ..XPP_Diffraction_Computer.Enums import *
-from ..XPP_Diffraction_Computer.XPP_Motor_Pos_Class import XPP_Motor_Pos
+from .. import Enums 
+from .. import XPP_Motor_Pos_Class 
 from tqdm import tqdm
 
 import math
