@@ -1,4 +1,4 @@
-# XPP_Diffraction_Computer
+# XPP_Calc
 A package that allows for helpful diffraction computations at XPP
 
 INSTALLATION STEPS:
