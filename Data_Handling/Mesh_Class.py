@@ -3,7 +3,6 @@
 import math
 import numpy as np
 import copy
-import plotly.graph_objs as go
 import matplotlib.pyplot as plt
 
 from matplotlib.colors import Normalize
