@@ -32,7 +32,7 @@ class XPP_Motor_Pos():
 		f"""
 		goniometerPos - theta: {self.theta}, swivel_x: {self.swivel_x}, swivel_z: {self.swivel_z}, phi: {self.phi}, 
 		detec_pos - incidentAxisPos: {self.incidentAxisPos}
-			 horizontalAxisPos: {self.horizontalAxisPos}
-			   virticalAxisPos: {self.virticalAxisPos}, 
+			    horizontalAxisPos: {self.horizontalAxisPos}
+			    virticalAxisPos: {self.virticalAxisPos}, 
 		detec_orien - alpha: {self.alpha}, beta: {self.beta}, gamma: {self.gamma}
 		"""

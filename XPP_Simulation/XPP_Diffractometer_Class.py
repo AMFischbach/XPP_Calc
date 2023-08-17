@@ -267,15 +267,93 @@ class XPP_Diffractometer(E6C):
 			print("invalid goniometer motor")
 			return False 
 
+	def set_mode(self, mode):
+		"""
+		Sets the diffractometer to a specific mode. Useful for finding motor positions from hkl vals.
+		"""
+		try:
+			self.engine.mode = mode
+		except:
+			print("invalid mode")
+			return False
 
-	def hkl_to_motor(self, hkl, r=None):
+		return True
+
+	def hkl_to_motor(self, hkl, r=None, mode=None):
 		"""
 		Computes all possible motor positions that will reach the given hkl value
 		Since HKLPY only automatically filters out the results of the theta, swivel_x, swivel_z, and phi, we must filter our the detector limits ourselves.
 		Returns a list of XPP_motor_pos objects.
+
+		Parameters:
+		hkl (list of length 3) - the desired h,k,l value to reach
+		r (float) - the desired detector distance from the sample
+		mode (string) - the mode to operate in
+
+		If mode is equal to "all" then we search in all modes
 		"""
-		# A list of all the possible values of theta, swivel_x, swivel_z, phi, gamma, and delta that satisfy hkl
-		possible_angles = self.calc.forward(hkl)
+		# If not given a mode we use the default mode
+		if mode is None:
+			# If there are no configurations in this mode an error will be thrown
+			try:
+				# A list of all the possible values of theta, swivel_x, swivel_z, phi, gamma, and delta that satisfy hkl
+				possible_angles = self.calc.forward(hkl)
+
+			except:
+				possible_angles = []
+
+		# If mode is set to all, we use all the modes
+		elif mode == "all":
+			# Make note of the current mode
+			current_mode = self.engine.mode
+
+			# All the possible configurations
+			possible_angles = []
+			
+			# Loop through all the modes and populate possible_angles
+			for mode in self.engine.modes:
+				# Set the mode
+				self.engine.mode = mode
+
+				# If there are no configurations in this mode an error will be thrown
+				try:
+					# Compute the possible configurations for this mode
+					mode_configs = self.hkl_to_motor(hkl)
+
+					# Add all configurations to the list of possible angles
+					for mode_config in mode_configs:
+						possible_angles.append(mode_config)
+
+				except:
+					pass
+
+			# Set the currently selected mode back to what it was before
+			self.engine.mode = current_mode
+
+		# Try to set the currently selected mode to be the desired one
+		else:
+			# Make note of the current mode
+			current_mode = self.engine.mode
+
+			# All the possible configurations
+			possible_angles = []
+
+			# Attempt to set the mode
+			if self.set_mode(mode):
+				possible_angles = self.calc.forward(hkl)
+
+			# If we cannot set the mode then nothing is returned
+			else:
+				possible_angles = []
+
+			# Set the mode back to what it was
+			self.engine.mode = current_mode
+
+
+		# If possible configurations is empty then hklpy cannot solve the problem
+		if len(possible_angles) == 0:		
+			print("hklpy could not find any diffractometer configurations to reach the given hkl value")
+			return []
 
 		# A list of XPP_motor_pos objects which satisfy the given hkl and motor limits 
 		possible_motor_pos = []
