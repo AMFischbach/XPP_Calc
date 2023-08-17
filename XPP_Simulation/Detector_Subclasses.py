@@ -1,7 +1,7 @@
 # Author: Trey Fischbach, Date Created: Jul 31, 2023, Date Last Modified: Jul 31, 2023
 
 # Import the necessary files
-from XPP_Detector_Class import XPP_Detector
+from XPP_Simulation.XPP_Detector_Class import XPP_Detector
 from XPP_Diffraction_Computer.Enums import *
 
 def get_detector(detectorTypeEnum, detecPos, detecOrientation, gammaObj, deltaObj, wavelength):

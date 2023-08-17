@@ -8,8 +8,8 @@ from ophyd import Component as Cpt
 
 from XPP_Simulation.XPP_Detector_Class import XPP_Detector
 from XPP_Simulation.Detector_Subclasses import * 
-from XPP_Diffraction_Computer.Enums import *
-from XPP_Diffraction_Computer.XPP_Motor_Pos_Class import XPP_Motor_Pos 
+from XPP_Calc.Enums import *
+from XPP_Calc.XPP_Motor_Pos_Class import XPP_Motor_Pos 
 
 import math
 import numpy as np
