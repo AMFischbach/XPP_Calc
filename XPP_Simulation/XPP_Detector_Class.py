@@ -3,11 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import copy
+from tqdm import tqdm
 
 from XPP_Diffraction_Computer.Enums import *
 from XPP_Diffraction_Computer.XPP_Motor_Pos_Class import XPP_Motor_Pos 
 from mpl_toolkits import mplot3d
-from tqdm import tqdm
 
 
 class XPP_Detector():

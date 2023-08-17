@@ -10,11 +10,11 @@ from XPP_Simulation.XPP_Detector_Class import XPP_Detector
 from XPP_Simulation.Detector_Subclasses import * 
 from XPP_Diffraction_Computer.Enums import *
 from XPP_Diffraction_Computer.XPP_Motor_Pos_Class import XPP_Motor_Pos 
-from tqdm import tqdm
 
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 class XPP_Diffractometer(E6C):
 	"""
