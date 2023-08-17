@@ -103,7 +103,7 @@ class XPP_Diffractometer(E6C):
 		# Adjust goniometer motor inputs to account for any offsets 
 		theta = theta - self.offsets["theta"]	
 		swivel_x = swivel_x - self.offsets["swivel_x"]
-		swivel_x = swivel_z - self.offsets["swivel_z"]
+		swivel_z = swivel_z - self.offsets["swivel_z"]
 		phi = phi - self.offsets["phi"]
 
 		# If given a detector position, need to compute gamma and delta
@@ -129,7 +129,8 @@ class XPP_Diffractometer(E6C):
 
 	def compute_UB_matrix(self, r1, r2):
 		"""Given two reflections (produced by the add_reflection method), comuptes the UB matrix"""
-		self.calc.sample.compute_UB(r1,r2)
+		UB_matrix = self.calc.sample.compute_UB(r1,r2)
+		return UB_matrix
 
 	def get_XPP_Motor_Pos(self):
 		"""Creates an XPP_Motor_Pos object based upon current motor position"""
@@ -318,7 +319,7 @@ class XPP_Diffractometer(E6C):
 		"""
 		# Get the current equivalent six circle values of the diffractometer
 		pos = self.calc.physical_positions
-		print(pos)
+		
 		# Compute and return hkl
 		return self.calc.inverse(pos)
 
