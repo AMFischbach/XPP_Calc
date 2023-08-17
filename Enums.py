@@ -8,7 +8,7 @@ class Goniometer(Enum):
 	phi = 4
 
 class Detector(Enum):
-	""" Enums for the 6 detector motors """
+	""" Enums for the 6 detector degrees of freedom"""
 	# Start counting at 5 to avoid accidental overlap with goniometer enumms
 	incidentAxisPos = 5
 	horizontalAxisPos = 6

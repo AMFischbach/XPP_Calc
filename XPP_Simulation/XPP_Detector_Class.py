@@ -314,10 +314,9 @@ class XPP_Detector():
 		Given gamma and delta angles in degrees, converts to a possible x,y,z detector position while maintaining
 		the current distance of the detector from the detector.
 		"""
-		currentX, currentY, currentZ = self._get_actual_detec_pos()
-
 		# If we are not given an r, we set r to be the current distance of the detector from the origin
 		if r is None:
+			currentX, currentY, currentZ = self._get_actual_detec_pos()
 			r = math.sqrt(currentX**2+currentY**2+currentZ**2)
 
 		# First convert gamma and delta to radians

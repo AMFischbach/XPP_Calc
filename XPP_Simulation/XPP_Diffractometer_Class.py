@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 class XPP_Diffractometer(E6C):
 	"""
-	XPP's six circle diffractometer
+	XPP's six circle diffractometer. Inherits all of hklpy functionallity through the parent class E6C.
 	"""
 	# the reciprocal axes are called: pseudo in hklpy
 	h = Cpt(PseudoSingle, '', kind="hinted")
@@ -35,8 +35,13 @@ class XPP_Diffractometer(E6C):
 
 	def __init__(self, initPos, energy, detectorType, *args, **kwargs): 
 		"""
-		Define initial motor positions for sithetalation
-		goniometerPos - [theta,swivel_x,swivel_z,phi,[x,y,z]] where x,y,z is the detector position in real space
+		Initialize the diffractometer.
+		
+		Parameters:
+		initPos (XPP_Motor_Pos Object) - the initial orientation and setup of the diffractometer NO OFFSETS
+		energy (float) - the energy of the X-rays in keV
+		detectorType (Enum) - indicates which detector type to use
+
 		LENGTH UNITS ARE IN MM
 		"""
 		super().__init__(*args, **kwargs)
@@ -50,7 +55,7 @@ class XPP_Diffractometer(E6C):
 				"omega":"swivel_x",
 				"delta":"delta"}
 
-		# Set the wavelength 
+		# Set the energy
 		self.calc.energy = energy
 
 		# Dictionary of offset values
@@ -73,12 +78,58 @@ class XPP_Diffractometer(E6C):
 
 		#self.show_constraints()
 
-	def add_sample(self, name, latticeParms):
-		"""This adds a sample to the diffractometer"""
-		lattice = Lattice(a = latticeParms[0], b = latticeParms[1],
-				c = latticeParms[2], alpha = latticeParms[3],
-				beta = latticeParms[4], gamma = latticeParms[5])
+	def add_sample(self, name, lattice_parms):
+		"""
+		Adds a sample to the diffractometer
+		Parameters:
+		lattice_parms (list of float)- [a,b,c,A,B,C]
+		"""
+		lattice = Lattice(a = lattice_parms[0], b = lattice_parms[1],
+				c = lattice_parms[2], alpha = lattice_parms[3],
+				beta = lattice_parms[4], gamma = lattice_parms[5])
 		self.calc.new_sample(name,lattice=lattice)
+
+	def add_reflection(self, reflection, theta=0, swivel_x=0, swivel_z=0, phi=0, gamma=0, delta=0, detecPos=None):
+		"""
+		Adds a reflection within the hklpy diffractometer.
+		Either takes in the six circle diffractometer inputs OR the four goniometer angles with a detector x,y,z position.
+		Note that the user does not have to define the non zero angles.
+		"""
+		# Initalize h,k,l for clarity
+		h = reflection[0]
+		k = reflction[1]
+		l = reflection[2]
+
+		# Adjust goniometer motor inputs to account for any offsets 
+		theta = theta - self.offsets["theta"]	
+		swivel_x = swivel_x - self.offsets["swivel_x"]
+		swivel_x = swivel_z - self.offsets["swivel_z"]
+		phi = phi - self.offsets["phi"]
+
+		# If given a detector position, need to compute gamma and delta
+		if detecPos is not None:
+			# This will automatically account for the offsets included in the given detecPos
+			gamma, delta = self.detector.detector_to_angle(detecPos)			
+			
+
+		# Add the reflection
+		reflection = self.calc.sample.add_reflection(
+				h,k,l,
+				position = self.calc.Position(
+					theta = theta,
+					swivel_x = swivel_x,
+					swivel_z = swivel_z,
+					phi = phi,
+					gamma = gamma,
+					delta = delta)
+				)
+		
+		# Return the reflection
+		return reflection
+
+	def compute_UB_matrix(self, r1, r2):
+		"""Given two reflections (produced by the add_reflection method), comuptes the UB matrix"""
+		self.calc.sample.compute_UB(r1,r2)
 
 	def get_XPP_Motor_Pos(self):
 		"""Creates an XPP_Motor_Pos object based upon current motor position"""
@@ -112,15 +163,6 @@ class XPP_Diffractometer(E6C):
 		else:
 			return None, ""
 	
-	#def _is_detector_motor(self, motorEnum):
-	#	"""
-	#	Helper method to check if the motor belongs to the detector
-	#	"""
-	#	isDetectorMotor = not (motorEnum == Goniometer.theta or motorEnum == Goniometer.swivel_x or \
-	#			      motorEnum == Goniometer.swivel_z or motorEnum == Goniometer.phi)
-
-	#	return isDetector
-
 	def set_goni_angle(self, motorEnum, pos):
 		"""
 		Given a Goniometer enum and a motor position, we move the corresponding goniometer motor to the specified
@@ -347,6 +389,3 @@ class XPP_Diffractometer(E6C):
 		plt.contour(X, Y, hkl_mag, colors="black", linewidth=0.5) # Adds some nice contours
 		plt.show()
 
-
-# How to access the reflections of the sample
-#diffractometer.calc.sample.reflections_dswivel_xils[0]
