@@ -65,7 +65,7 @@ class XPP_Detector():
 
 		# Initialize the detector angle values of gamma and delta to reflect
 		# the inital position of the detector
-		self.move(detecPos, detecOrientation)
+		self.move(detecPos, detecOrientation, standard_format=True)
 		
 	def _get_detec_motor(self, motorEnum):
 		"""
@@ -210,9 +210,14 @@ class XPP_Detector():
 			print("invalid range")
 			return False
 
-	def move(self, detecPos, detecOrientation = None):
+	def move(self, detecPos, detecOrientation = None, standard_format=False):
 		"""
-		Moves the detector to a new incidentAxisPos,horizontalAxisPos,z position and changes the Euler angles.
+		Moves the detector to a new incidentAxisPos, horizontalAxisPos, virticalAxis pos position and changes the Euler angles.
+		Parameters:
+		detecPos (array) - x,y,z
+		detecOrientation (array) - alpha, beta, gamma
+		standard_format (boolean) - if the order of x,y,z and alpha, beta, gamma is how the user has defined it or
+					    if the order is in the standard format (incident, horizontal, viritcal)
 		"""
 		# Get the equivalent gamma and delta values
 		gamma, delta = self.detector_to_angle(detecPos)
@@ -247,20 +252,26 @@ class XPP_Detector():
 			self.beta = detecOrientation[1]
 			self.gamma = detecOrientation[2]
 
-	def detector_to_angle(self, detecPos=None, standardFormat=False):
+	def detector_to_angle(self, detecPos=None, standard_format=False):
 		"""
 		Given detector position in x,y,z, we calculate the corresponding gamma and delta angles
 		accordingly. This allows us to convert xpp's robot arm movements to what would be the gamma
 		and delta angle movement of a typical 6 circle diffractometer.
+		
+		Parameters:
+		detecPos (array) - x,y,z
+		standard_format (boolean) - if the order of x,y,z and alpha, beta, gamma is how the user has defined it or
+					    if the order is in the standard format (incident, horizontal, viritcal)
 
-		Returns (gamma, delta)
+		Returns:
+		(gamma, delta)
 		"""		
 		# Get the true detector position
 		if detecPos is None:
 			detecPos = self._get_actual_detec_pos()
 		else:
 			# If the input is not already in the standard format (offsets not added and not in the correct order)
-			if not standardFormat:
+			if not standard_format:
 				detecPos = self._get_actual_detec_pos(detecPos)
 
 
@@ -471,20 +482,23 @@ class XPP_Detector():
 		else:
 			self.banned_regions.append(banned_region)
 	
-	def get_pure_Q(self, xyzPos=None, standardFormat=False):
+	def get_pure_Q(self, xyzPos=None, standard_format=False):
 		"""
 		To find what our Q value would be without a crystal we can calculate this using some xyz position.
-		We assume that our beam is propagating along the +x axis (originating from x=-infinity) and that 
+		We assume that our beam is propagating along the +incident axis (originating from x=-infinity) and that 
 		our point of scattering it at the origin.
-		NOTE: WE ASSUME THAT IS xyzPOS IS GIVEN, THE OFFSETS HAVE ALREADY BEEN ADDED, (so it can be
-		used inside the create_from_xyzMatrix method)
+		
+		Parameters:
+		detecPos (array) - x,y,z
+		standard_format (boolean) - if the order of x,y,z and alpha, beta, gamma is how the user has defined it or
+					    if the order is in the standard format (incident, horizontal, viritcal)
 		"""
 		# Get the true detector position
 		if xyzPos is None:
 			xyzPos = self._get_actual_detec_pos()
 		else:
 			# If the input is not already in the standard format (offsets not added and not in the correct order)
-			if not standardFormat:
+			if not standard_format:
 				xyzPos = self._get_actual_detec_pos(xyzPos)
 
 		incidentAxisPos = xyzPos[0]
@@ -511,7 +525,7 @@ class XPP_Detector():
 		
 		return Q
 
-	def get_rotation_matrix(self, detecPos=None, standardFormat=False):
+	def get_rotation_matrix(self, detecPos=None, standard_format=False):
 		"""
 		Given detector x,y,z, finds the rotation matrix that will roatate the detector
 		so that it is pointing towards the origin. 
@@ -523,7 +537,7 @@ class XPP_Detector():
 			detecPos = self._get_actual_detec_pos()
 		else:
 			# If the input is not already in the standard format (offsets not added and not in the correct order)
-			if not standardFormat:
+			if not standard_format:
 				detecPos = self._get_actual_detec_pos(detecPos)
 
 		# So the best way to do this is do normalize the given vector, and then find

@@ -33,12 +33,11 @@ class XPP_Diffractometer(E6C):
 	gamma = Cpt(SoftPositioner, kind="hinted")
 	delta = Cpt(SoftPositioner, kind="hinted")
 
-	def __init__(self, initPos, energy, detectorType, *args, **kwargs): 
+	def __init__(self, energy, detectorType, *args, **kwargs): 
 		"""
 		Initialize the diffractometer.
 		
 		Parameters:
-		initPos (XPP_Motor_Pos Object) - the initial orientation and setup of the diffractometer NO OFFSETS
 		energy (float) - the energy of the X-rays in keV
 		detectorType (Enum) - indicates which detector type to use
 
@@ -66,6 +65,9 @@ class XPP_Diffractometer(E6C):
 			"phi":0,
 			"swivel_x":0,
 			"delta":0}
+
+		# Initalize the detector position
+		initPos = XPP_Motor_Pos((0,0,0,0),(100,0,0),(90,0,-90))
 
 		# Create the detector obj
 		self.detector = get_detector(detectorType, initPos.detecPos, initPos.detecOrientation, self.gamma, self.delta, self.calc.wavelength) 
@@ -266,8 +268,7 @@ class XPP_Diffractometer(E6C):
 	def hkl_to_motor(self, hkl, r=None):
 		"""
 		Computes all possible motor positions that will reach the given hkl value
-		The reason that r is set to None is so that in the case no r is given, the detector method can
-		automatically compute r using optional parameters. Since HKLPY automatically filters out the results of the theta, swivel_x, swivel_z, and phi, we must filter our the detector limits ourselves.
+		Since HKLPY only automatically filters out the results of the theta, swivel_x, swivel_z, and phi, we must filter our the detector limits ourselves.
 		Returns a list of XPP_motor_pos objects.
 		"""
 		# A list of all the possible values of theta, swivel_x, swivel_z, phi, gamma, and delta that satisfy hkl
