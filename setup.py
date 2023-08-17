@@ -5,7 +5,7 @@ DESCRIPTION = "A package that allows for helpful diffraction computations at XPP
 INSTALL_REQS = ["numpy", "matplotlib", "tqdm", "scipy"]
 
 setup(
-	name="XPP_Diffraction_Computer",
+	name="XPP_Calc",
 	version=VERSION,
 	author="Trey Fischbach",
 	description=DESCRIPTION,
