@@ -11,11 +11,11 @@ STEP 1: Create conda environment with hklpy:
 
 conda create -n DUMMY_ENV_NAME -c conda-forge hklpy
 
-STEP 2: Activate the newly create conda environment
+STEP 2: Activate the newly create conda environment:
 
 conda activate DUMMY_ENV_NAME
 
-STEP 3: Donwload XPP_Calc from github
+STEP 3: Donwload XPP_Calc from github:
 
 pip install git+https://github.com/AMFischbach/XPP_Calc.git
 
