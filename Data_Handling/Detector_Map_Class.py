@@ -8,7 +8,7 @@ import copy
 from tqdm import tqdm
 from matplotlib.colors import Normalize
 
-from XPP_Motor_Pos_Class import XPP_Motor_Pos
+from XPP_Diffraction_Computer.XPP_Motor_Pos_Class import XPP_Motor_Pos 
 
 class Detector_Map():
 	"""
