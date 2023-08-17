@@ -417,7 +417,7 @@ class XPP_Detector():
 				# 2.) Rotate the detector about the the three axis
 				xyzMatrix[row, col] = rotationM.dot(xyzMatrix[row, col])
 				
-				# 3.) Move the center of the detector to its incidentAxisPos,horizontalAxisPos,z position
+				# 3.) Move the center of the detector to its incidentAxisPos,horizontalAxisPos,virticalAxisPos
 				xyzMatrix[row, col] = np.add(xyzMatrix[row, col], translationVector)
 				
 				# 4.) Apply any additional desired transformations
@@ -522,6 +522,9 @@ class XPP_Detector():
 
 		# We subtract the two to find our Q vector
 		Q = np.subtract(kincident, kreflc)
+
+		# We then position the Q vector back into the user format
+		Q = self._standard_to_user_axis(Q)
 		
 		return Q
 
