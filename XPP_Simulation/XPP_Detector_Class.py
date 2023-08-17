@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import math
 import copy
 
-from .. import Enums 
-from .. import XPP_Motor_Pos_Class 
+from XPP_Diffraction_Computer.Enums import *
+from XPP_Diffraction_Computer.XPP_Motor_Pos_Class import XPP_Motor_Pos 
 from mpl_toolkits import mplot3d
 from tqdm import tqdm
 
