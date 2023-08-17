@@ -318,7 +318,7 @@ class XPP_Diffractometer(E6C):
 				# If there are no configurations in this mode an error will be thrown
 				try:
 					# Compute the possible configurations for this mode
-					mode_configs = self.hkl_to_motor(hkl)
+					mode_configs = self.calc.forward(hkl)
 
 					# Add all configurations to the list of possible angles
 					for mode_config in mode_configs:
