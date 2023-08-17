@@ -97,7 +97,7 @@ class XPP_Diffractometer(E6C):
 		"""
 		# Initalize h,k,l for clarity
 		h = reflection[0]
-		k = reflction[1]
+		k = reflection[1]
 		l = reflection[2]
 
 		# Adjust goniometer motor inputs to account for any offsets 
