@@ -318,7 +318,7 @@ class XPP_Diffractometer(E6C):
 		"""
 		# Get the current equivalent six circle values of the diffractometer
 		pos = self.calc.physical_positions
-
+		print(pos)
 		# Compute and return hkl
 		return self.calc.inverse(pos)
 
