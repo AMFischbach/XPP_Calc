@@ -26,13 +26,13 @@ class XPP_Detector():
 		wavelength: wavelength of incident light in Angstroms
 		name: the name of the detector, commonly the detector type
 		"""
-		# The detector position and euler angles are just floats or None
-		self.incidentAxisPos = None
-		self.horizontalAxisPos = None
-		self.virticalAxisPos = None
-		self.alpha = None
-		self.beta = None
-		self.gamma = None
+		# The initial detector position and euler angles are just floats defined in the diffractometer __init__ method 
+		self.incidentAxisPos = detecPos[0]
+		self.horizontalAxisPos = detecPos[1]
+		self.virticalAxisPos = detecPos[2]
+		self.alpha = detecOrientation[0]
+		self.beta = detecOrientation[1]
+		self.gamma = detecOrientation[2]
 
 		# Gamma and delta's cpts which are handed down from XPP_Diffractometer Class
 		self.gammaObj = gammaObj
