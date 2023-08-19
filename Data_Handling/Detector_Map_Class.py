@@ -205,11 +205,11 @@ class Detector_Map():
 		y_grid = np.arange(self.intensity_map.shape[1])
 		X, Y = np.meshgrid(x_grid, y_grid)
 
-		contour_map_h = plt.contour(X, Y, vector_map_h, levels=10, colors=color)
+		contour_map_h = plt.contour(X, Y, vector_map_h, levels=10, colors="red")
 		plt.clabel(contour_map_h, inline=True, fontsize=8)
-		contour_map_k = plt.contour(X, Y, vector_map_k, levels=10, colors=color)
+		contour_map_k = plt.contour(X, Y, vector_map_k, levels=10, colors="blue")
 		plt.clabel(contour_map_h, inline=True, fontsize=8)
-		contour_map_l = plt.contour(X, Y, vector_map_l, levels=10, colors=color)
+		contour_map_l = plt.contour(X, Y, vector_map_l, levels=10, colors="green")
 		plt.clabel(contour_map_h, inline=True, fontsize=8)
 
 		# Plot the desired point
