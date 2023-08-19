@@ -152,9 +152,9 @@ class Detector_Map():
 		X, Y = np.meshgrid(x_grid, y_grid)
 	
 		# If we are plotting contour maps
-		if contour:
-			contour_map = plt.contour(X, Y, self.intensity_map, levels=10, colors=color)
-			plt.clabel(contour_map, inline=True, fontsize=8)
+		if contour_map:
+			contour_plot = plt.contour(X, Y, self.intensity_map, levels=10, colors=color)
+			plt.clabel(contour_plot, inline=True, fontsize=8)
 
 		# If we are plotting color gradient
 		else:
@@ -164,7 +164,7 @@ class Detector_Map():
 
 		if newFigure:
 			# Title axis, figure, and colorbar
-			if not contour:
+			if not contour_map:
 				plt.colorbar(label=colorbarLabel)
 
 			plt.xlabel(xlabel)
