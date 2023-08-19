@@ -34,6 +34,11 @@ class Detector_Map():
 
 		# XPP_Motor_Pos object
 		self.motor_pos = motor_pos
+
+		# If we are given an intensity map we check to see if its dimensions match the vector_map
+		if intensity_map is not None:
+			if vector_map.shape != intensity_map.shape:
+				print("WARNING INTENSITY MAP SHAPE DOES NOT MATCH VECTOR MAP")
 	
 	def _title_plot(self, ax, title, axisLabels):
 		"""
@@ -166,13 +171,15 @@ class Detector_Map():
 			ax.set_aspect('equal', adjustable='box')
 			plt.show()
 
-	def plot_reciprocal_map_2D(self, title="", xlabel="", ylabel="", pixel_point=None):
+	def plot_reciprocal_map_2D(self, title="", xlabel="", ylabel="", pixel_point=None, just_contour=False):
 		"""
 		Plots the detector image (intentisty map) with contour lines corresponding to
 		h,k,l superimposed.
 
 		pixel_point can be a specified detector pixel where a black point will be plotted
 		as a list of two numbers [row, col]
+
+		just_contour means that the intensity map won't be plotted
 		"""
 		# Initalize vector maps for h,k,l
 		vector_map_h = np.empty(self.vector_map.shape)
