@@ -56,8 +56,8 @@ class Jungfrau_Detector(XPP_Detector):
 	"""
 	
 	def __init__(self, detec_pos, detec_orien, gammaObj, deltaObj, wavelength):
-		pixelWidthNum = 1060
-		pixelHeightNum = 1024
+		pixelWidthNum = 1024
+		pixelHeightNum = 1060
 		pixel_size = 75 # microns
 
 		# Motor offsets
