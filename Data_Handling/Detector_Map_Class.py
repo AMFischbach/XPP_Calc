@@ -136,10 +136,13 @@ class Detector_Map():
 		# Display the plot
 		plt.show()
 
-	def plot_intensity_map_2D(self, title="", xlabel="", ylabel="", colorbarLabel="", contour=False, color="blue", newFigure=True):		
+	def plot_intensity_map_2D(self, title="", xlabel="", ylabel="", colorbarLabel="", contour_map=False, contours=False, color="blue", newFigure=True):		
 
 		"""
 		Plots the 2D intensity matrix of the Detector_Map object.
+
+		countour_map indicates if we plot only a contour map
+		contours indicates if we plot contours over the intensity_map image
 		"""
 		row_num, col_num = self.intensity_map.shape
 
@@ -156,6 +159,8 @@ class Detector_Map():
 		# If we are plotting color gradient
 		else:
 			plt.pcolormesh(X, Y, self.intensity_map, cmap="viridis")
+			if contours:
+				plt.contour(X, Y, self.intensity_map, levels=10, colors="black")
 
 		if newFigure:
 			# Title axis, figure, and colorbar
@@ -201,8 +206,8 @@ class Detector_Map():
 		self.plot_intensity_map_2D(newFigure=False)
 		
 		# Plot each of the countour maps
-		x_grid = np.arange(self.intensity_map.shape[0])
-		y_grid = np.arange(self.intensity_map.shape[1])
+		x_grid = np.arange(self.intensity_map.shape[1])
+		y_grid = np.arange(self.intensity_map.shape[0])
 		X, Y = np.meshgrid(x_grid, y_grid)
 
 		contour_map_h = plt.contour(X, Y, vector_map_h, levels=10, colors="red")
