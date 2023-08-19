@@ -126,7 +126,7 @@ class Detector_Map():
 		plt.title(title)
 
 		# Add contour lines
-		plt.contour(x_grid, y_grid, intensity_map, colors="black", linewidth=0.5) # Adds some nice contours
+		plt.contour(x_grid, y_grid, self.intensity_map, colors="black", linewidth=0.5) # Adds some nice contours
 
 		# Make the axes equal if the user wants
 		if axisEqual:
