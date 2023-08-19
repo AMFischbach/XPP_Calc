@@ -1,4 +1,4 @@
-# Author: Trey Fischbach, Date Created: Aug 4, 2023, Date Last Modified: Aug 4, 2023
+# Author: Trey Fischbach, Date Created: Aug 4, 2023, Date Last Modified: Aug 18, 2023
 
 import math
 import numpy as np
@@ -161,15 +161,64 @@ class Detector_Map():
 			plt.ylabel(ylabel)
 			plt.title(title)
 
-			# Add contour lines
-			#plt.contour(x_grid, y_grid, self.intensity_map, colors="black", linewidth=0.5) # Adds some nice contours
-
 			# Make the axes equal
 			ax = plt.gca()
 			ax.set_aspect('equal', adjustable='box')
 			plt.show()
 
+	def plot_reciprocal_map_2D(self, title="", xlabel="", ylabel="", pixel_point=None):
+		"""
+		Plots the detector image (intentisty map) with contour lines corresponding to
+		h,k,l superimposed.
 
+		pixel_point can be a specified detector pixel where a black point will be plotted
+		as a list of two numbers [row, col]
+		"""
+		# Initalize vector maps for h,k,l
+		vector_map_h = np.empty(self.vector_map.shape)
+		vector_map_k = np.empty(self.vector_map.shape)
+		vector_map_l = np.empty(self.vector_map.shape)
+
+		# Population vector maps
+		row_num, col_num = self.vector_map.shape
+		for row in range(row_num):
+			for col in range(col_num):
+				vector_map_h[row, col] = (self.vector_map[row, col])[0]
+				vector_map_k[row, col] = (self.vector_map[row, col])[1]
+				vector_map_l[row, col] = (self.vector_map[row, col])[2]
+		
+		# Make a new figure
+		plt.figure()
+
+		# Plot the intensity map (detector image)
+		self.plot_intensity_map_2D(newFigure=False)
+		
+		# Plot each of the countour maps
+		x_grid = np.arange(self.intensity_map.shape[0])
+		y_grid = np.arange(self.intensity_map.shape[1])
+		X, Y = np.meshgrid(x_grid, y_grid)
+
+		contour_map_h = plt.contour(X, Y, vector_map_h, levels=10, colors=color)
+		plt.clabel(contour_map_h, inline=True, fontsize=8)
+		contour_map_k = plt.contour(X, Y, vector_map_k, levels=10, colors=color)
+		plt.clabel(contour_map_h, inline=True, fontsize=8)
+		contour_map_l = plt.contour(X, Y, vector_map_l, levels=10, colors=color)
+		plt.clabel(contour_map_h, inline=True, fontsize=8)
+
+		# Plot the desired point
+		if pixel_point is not None:
+			plt.scatter(pixel_point[0], pixel_point[1], color="black")
+
+		# Label the axes and the plot
+		plt.xlabel(xlabel)
+		plt.ylabel(ylabel)
+		plt.title(title)
+		
+		# Make the axes equal
+		ax = plt.gca()
+
+		# Plot the figure
+		plt.show()
 
 	def plot_vector_map_3D(self, surface=False, outline=False, ax=None, color="red", title="", xlabel="", ylabel="", colorbarLabel=""):		
 		"""
@@ -235,7 +284,7 @@ class Detector_Map():
 			
 			wireframe = ax.plot_trisurf(x_vals, y_vals, z_vals, color=color, alpha=0.7)
 
-		# If we are plotting points
+		# If we are plotting points (there is no outline option here)
 		else:
 
 			# Plot each vector as a point
