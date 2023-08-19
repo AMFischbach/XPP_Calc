@@ -201,9 +201,10 @@ class Detector_Map():
 		
 		# Make a new figure
 		plt.figure()
-
+		
 		# Plot the intensity map (detector image)
-		self.plot_intensity_map_2D(newFigure=False)
+		if not just_contour:
+			self.plot_intensity_map_2D(newFigure=False)
 		
 		# Plot each of the countour maps
 		x_grid = np.arange(self.intensity_map.shape[1])
